@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Handyman Success Podcast | Episode Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary: #1b2a4a;
+      --primary-light: #2c3e6b;
+      --accent: #e8792b;
+      --accent-hover: #d4691f;
+      --bg: #f4f6f9;
+      --card-bg: #ffffff;
+      --text: #1a1a2e;
+      --text-muted: #6b7280;
+      --border: #e5e7eb;
+      --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      padding: 2rem 1.5rem 1.5rem;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(27,42,74,0.3);
+    }
+
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--accent);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    .brand h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .brand h1 span { color: var(--accent); }
+
+    .header p {
+      font-size: 0.875rem;
+      opacity: 0.8;
+      margin-bottom: 1.25rem;
+    }
+
+    /* Search */
+    .search-wrap {
+      max-width: 500px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .search-wrap svg {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 0.5;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.75rem;
+      border: none;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      background: rgba(255,255,255,0.15);
+      color: white;
+      outline: none;
+      transition: background 0.2s;
+    }
+
+    .search-input::placeholder { color: rgba(255,255,255,0.5); }
+    .search-input:focus { background: rgba(255,255,255,0.25); }
+
+    /* Main layout */
+    .main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.5rem;
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 280px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 140px;
+      align-self: flex-start;
+      max-height: calc(100vh - 160px);
+      overflow-y: auto;
+    }
+
+    .sidebar-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      box-shadow: var(--shadow);
+    }
+
+    .sidebar-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .category-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      width: 100%;
+      padding: 0.6rem 0.75rem;
+      border: none;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      color: var(--text);
+      font-size: 0.82rem;
+      font-family: inherit;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: left;
+      line-height: 1.3;
+    }
+
+    .category-btn:hover { background: var(--bg); }
+
+    .category-btn.active {
+      background: var(--accent);
+      color: white;
+    }
+
+    .category-btn .count {
+      margin-left: auto;
+      font-size: 0.7rem;
+      font-weight: 600;
+      background: var(--bg);
+      color: var(--text-muted);
+      padding: 0.15rem 0.5rem;
+      border-radius: 50px;
+      flex-shrink: 0;
+    }
+
+    .category-btn.active .count {
+      background: rgba(255,255,255,0.25);
+      color: white;
+    }
+
+    /* Content */
+    .content { flex: 1; min-width: 0; }
+
+    .results-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      padding: 0 0.25rem;
+    }
+
+    .results-count {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .results-count strong {
+      color: var(--text);
+    }
+
+    .view-toggle {
+      display: flex;
+      gap: 0.25rem;
+      background: var(--card-bg);
+      border-radius: var(--radius-sm);
+      padding: 0.2rem;
+      box-shadow: var(--shadow);
+    }
+
+    .view-btn {
+      border: none;
+      background: transparent;
+      padding: 0.4rem 0.6rem;
+      border-radius: 6px;
+      cursor: pointer;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      transition: all 0.15s;
+    }
+
+    .view-btn.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    /* Episode grid */
+    .episodes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+
+    .episodes-grid.list-view {
+      grid-template-columns: 1fr;
+    }
+
+    /* Episode card */
+    .episode-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .episode-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .card-thumbnail {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 60%, var(--accent) 100%);
+      padding: 1.25rem;
+      position: relative;
+      min-height: 100px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+
+    .card-ep-number {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      background: rgba(0,0,0,0.3);
+      color: white;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: 50px;
+      backdrop-filter: blur(4px);
+    }
+
+    .card-play {
+      width: 36px;
+      height: 36px;
+      background: var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      top: 0.75rem;
+      left: 0.75rem;
+      box-shadow: 0 2px 8px rgba(232,121,43,0.4);
+    }
+
+    .card-play svg { margin-left: 2px; }
+
+    .card-guest {
+      color: rgba(255,255,255,0.9);
+      font-size: 1rem;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .card-body {
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .card-title {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.75rem;
+      line-height: 1.4;
+    }
+
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-top: auto;
+    }
+
+    .tag {
+      font-size: 0.68rem;
+      font-weight: 600;
+      padding: 0.2rem 0.55rem;
+      border-radius: 50px;
+      white-space: nowrap;
+    }
+
+    /* Tag colors */
+    .tag-0 { background: #eef2ff; color: #4338ca; }
+    .tag-1 { background: #fef3c7; color: #b45309; }
+    .tag-2 { background: #dcfce7; color: #15803d; }
+    .tag-3 { background: #fce7f3; color: #be185d; }
+    .tag-4 { background: #e0e7ff; color: #4f46e5; }
+    .tag-5 { background: #ccfbf1; color: #0f766e; }
+    .tag-6 { background: #fef9c3; color: #a16207; }
+    .tag-7 { background: #ede9fe; color: #7c3aed; }
+    .tag-8 { background: #ffe4e6; color: #be123c; }
+    .tag-9 { background: #e0f2fe; color: #0369a1; }
+
+    /* List view card overrides */
+    .list-view .episode-card {
+      flex-direction: row;
+    }
+
+    .list-view .card-thumbnail {
+      min-height: unset;
+      width: 200px;
+      flex-shrink: 0;
+      min-width: 200px;
+    }
+
+    .list-view .card-body {
+      justify-content: center;
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text-muted);
+    }
+
+    .empty-state svg {
+      margin-bottom: 1rem;
+      opacity: 0.4;
+    }
+
+    .empty-state h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+
+    /* Mobile sidebar toggle */
+    .mobile-filter-btn {
+      display: none;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--card-bg);
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--text);
+      box-shadow: var(--shadow);
+      margin-bottom: 1rem;
+    }
+
+    .mobile-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 200;
+    }
+
+    .mobile-overlay.open { display: block; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header { padding: 1.25rem 1rem 1rem; }
+      .brand h1 { font-size: 1.2rem; }
+      .main { padding: 1rem; flex-direction: column; }
+
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: -300px;
+        width: 280px;
+        height: 100vh;
+        z-index: 300;
+        background: var(--bg);
+        padding: 1.5rem 1rem;
+        transition: left 0.3s ease;
+        max-height: 100vh;
+        overflow-y: auto;
+      }
+
+      .sidebar.open { left: 0; }
+
+      .mobile-filter-btn { display: flex; }
+
+      .episodes-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .list-view .episode-card { flex-direction: column; }
+      .list-view .card-thumbnail { width: auto; min-width: unset; }
+
+      .close-sidebar {
+        display: block;
+        text-align: right;
+        margin-bottom: 1rem;
+      }
+    }
+
+    @media (min-width: 769px) {
+      .close-sidebar { display: none; }
+    }
+
+    /* Scrollbar */
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-track { background: transparent; }
+    .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .episode-card {
+      animation: fadeIn 0.3s ease forwards;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+        </div>
+        <h1>Handyman Success <span>Podcast</span></h1>
+      </div>
+      <p>Browse 66 episodes by topic &mdash; Hosted by Allen Lee &amp; Jason Call</p>
+      <div class="search-wrap">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2"><circle cx="11" cy="11" r="8"/><path stroke-linecap="round" d="M21 21l-4.35-4.35"/></svg>
+        <input type="text" class="search-input" id="searchInput" placeholder="Search episodes, guests, or topics...">
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile overlay -->
+  <div class="mobile-overlay" id="overlay"></div>
+
+  <div class="main">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="close-sidebar">
+        <button onclick="toggleSidebar()" style="border:none;background:none;font-size:1.5rem;cursor:pointer;color:var(--text-muted);">&times;</button>
+      </div>
+      <div class="sidebar-card">
+        <div class="sidebar-title">Filter by Category</div>
+        <div id="categoryList"></div>
+      </div>
+    </aside>
+
+    <!-- Content -->
+    <section class="content">
+      <button class="mobile-filter-btn" onclick="toggleSidebar()">
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M3 4h18M3 12h12M3 20h6"/></svg>
+        Filter by Category
+      </button>
+
+      <div class="results-bar">
+        <div class="results-count" id="resultsCount"></div>
+        <div class="view-toggle">
+          <button class="view-btn active" id="gridBtn" onclick="setView('grid')" title="Grid view">
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
+          </button>
+          <button class="view-btn" id="listBtn" onclick="setView('list')" title="List view">
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><rect x="1" y="1" width="14" height="3" rx="1"/><rect x="1" y="6.5" width="14" height="3" rx="1"/><rect x="1" y="12" width="14" height="3" rx="1"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="episodes-grid" id="episodesGrid"></div>
+    </section>
+  </div>
+
+  <script>
+    // Category color index map
+    const CATEGORIES = [
+      "Getting Started & Going Full-Time",
+      "Mindset, Leadership & Personal Growth",
+      "Pricing, Estimating & Profitability",
+      "Marketing, Reviews & Lead Generation",
+      "Hiring, Team Building & Scaling",
+      "Systems, CRM & Operational Efficiency",
+      "Niches, Service Mix & Positioning",
+      "Branding, Customer Experience & Reputation",
+      "Faith, Family & Lifestyle Design",
+      "Commercial, Property Management & Recurring Revenue"
+    ];
+
+    const CATEGORY_ICONS = [
+      "\u{1F680}", "\u{1F9E0}", "\u{1F4B0}", "\u{1F4E3}",
+      "\u{1F465}", "\u{2699}\uFE0F", "\u{1F3AF}", "\u{2B50}",
+      "\u{1F3E1}", "\u{1F3E2}"
+    ];
+
+    let episodes = [];
+    let activeCategory = null;
+    let searchQuery = "";
+    let currentView = "grid";
+
+    // Parse CSV
+    function parseCSV(text) {
+      const lines = text.split("\n").filter(l => l.trim());
+      const results = [];
+      // Skip header
+      for (let i = 1; i < lines.length; i++) {
+        const row = parseCSVRow(lines[i]);
+        if (row.length >= 3) {
+          const title = row[0].trim();
+          const link = row[1].trim();
+          const cats = row[2].split(";").map(c => c.trim()).filter(Boolean);
+          // Extract episode number and guest name
+          const epMatch = title.match(/^#(\d+)\s+(.+)/);
+          const epNum = epMatch ? parseInt(epMatch[1]) : 0;
+          const epName = epMatch ? epMatch[2] : title;
+          results.push({ title, link, categories: cats, epNum, epName });
+        }
+      }
+      return results;
+    }
+
+    function parseCSVRow(line) {
+      const result = [];
+      let current = "";
+      let inQuotes = false;
+      for (let i = 0; i < line.length; i++) {
+        const c = line[i];
+        if (inQuotes) {
+          if (c === '"' && line[i + 1] === '"') {
+            current += '"';
+            i++;
+          } else if (c === '"') {
+            inQuotes = false;
+          } else {
+            current += c;
+          }
+        } else {
+          if (c === '"') {
+            inQuotes = true;
+          } else if (c === ',') {
+            result.push(current);
+            current = "";
+          } else {
+            current += c;
+          }
+        }
+      }
+      result.push(current);
+      return result;
+    }
+
+    // Count episodes per category
+    function getCategoryCounts() {
+      const filtered = getSearchFiltered();
+      const counts = {};
+      CATEGORIES.forEach(c => counts[c] = 0);
+      filtered.forEach(ep => {
+        ep.categories.forEach(c => {
+          if (counts[c] !== undefined) counts[c]++;
+        });
+      });
+      return counts;
+    }
+
+    function getSearchFiltered() {
+      if (!searchQuery) return episodes;
+      const q = searchQuery.toLowerCase();
+      return episodes.filter(ep =>
+        ep.title.toLowerCase().includes(q) ||
+        ep.categories.some(c => c.toLowerCase().includes(q))
+      );
+    }
+
+    function getFiltered() {
+      let filtered = getSearchFiltered();
+      if (activeCategory) {
+        filtered = filtered.filter(ep => ep.categories.includes(activeCategory));
+      }
+      return filtered;
+    }
+
+    // Render
+    function renderCategories() {
+      const counts = getCategoryCounts();
+      const total = getSearchFiltered().length;
+      const list = document.getElementById("categoryList");
+
+      let html = `<button class="category-btn ${!activeCategory ? 'active' : ''}" onclick="filterCategory(null)">
+        <span>All Episodes</span>
+        <span class="count">${total}</span>
+      </button>`;
+
+      CATEGORIES.forEach((cat, i) => {
+        html += `<button class="category-btn ${activeCategory === cat ? 'active' : ''}" onclick="filterCategory('${cat.replace(/'/g, "\\'")}')">
+          <span>${CATEGORY_ICONS[i]} ${cat}</span>
+          <span class="count">${counts[cat]}</span>
+        </button>`;
+      });
+
+      list.innerHTML = html;
+    }
+
+    function renderEpisodes() {
+      const filtered = getFiltered();
+      const grid = document.getElementById("episodesGrid");
+      const count = document.getElementById("resultsCount");
+
+      count.innerHTML = `Showing <strong>${filtered.length}</strong> of ${episodes.length} episodes`;
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div class="empty-state" style="grid-column: 1/-1">
+          <svg width="48" height="48" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path stroke-linecap="round" d="M21 21l-4.35-4.35"/></svg>
+          <h3>No episodes found</h3>
+          <p>Try a different search or category filter.</p>
+        </div>`;
+        return;
+      }
+
+      grid.innerHTML = filtered.map((ep, idx) => {
+        const tags = ep.categories.map(c => {
+          const ci = CATEGORIES.indexOf(c);
+          return `<span class="tag tag-${ci >= 0 ? ci : 0}">${c}</span>`;
+        }).join("");
+
+        return `<a class="episode-card" href="${ep.link}" target="_blank" rel="noopener" style="animation-delay:${idx * 0.03}s">
+          <div class="card-thumbnail">
+            <span class="card-ep-number">EP ${ep.epNum}</span>
+            <div class="card-play">
+              <svg width="14" height="14" fill="white" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+            <div class="card-guest">${escapeHtml(ep.epName)}</div>
+          </div>
+          <div class="card-body">
+            <div class="card-title">${escapeHtml(ep.title)}</div>
+            <div class="card-tags">${tags}</div>
+          </div>
+        </a>`;
+      }).join("");
+    }
+
+    function escapeHtml(str) {
+      const d = document.createElement("div");
+      d.textContent = str;
+      return d.innerHTML;
+    }
+
+    // Actions
+    function filterCategory(cat) {
+      activeCategory = cat;
+      render();
+      // Close sidebar on mobile
+      if (window.innerWidth <= 768) {
+        document.getElementById("sidebar").classList.remove("open");
+        document.getElementById("overlay").classList.remove("open");
+      }
+    }
+
+    function setView(view) {
+      currentView = view;
+      const grid = document.getElementById("episodesGrid");
+      const gridBtn = document.getElementById("gridBtn");
+      const listBtn = document.getElementById("listBtn");
+      grid.classList.toggle("list-view", view === "list");
+      gridBtn.classList.toggle("active", view === "grid");
+      listBtn.classList.toggle("active", view === "list");
+    }
+
+    function toggleSidebar() {
+      document.getElementById("sidebar").classList.toggle("open");
+      document.getElementById("overlay").classList.toggle("open");
+    }
+
+    function render() {
+      renderCategories();
+      renderEpisodes();
+    }
+
+    // Search debounce
+    let searchTimer;
+    document.getElementById("searchInput").addEventListener("input", (e) => {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => {
+        searchQuery = e.target.value.trim();
+        render();
+      }, 200);
+    });
+
+    // Close sidebar on overlay click
+    document.getElementById("overlay").addEventListener("click", toggleSidebar);
+
+    // Load CSV
+    fetch("handyman_success_podcast_categories_so_far.csv")
+      .then(r => r.text())
+      .then(text => {
+        episodes = parseCSV(text);
+        render();
+      })
+      .catch(() => {
+        document.getElementById("episodesGrid").innerHTML =
+          '<div class="empty-state" style="grid-column:1/-1"><h3>Could not load episodes</h3><p>Make sure the CSV file is in the same directory.</p></div>';
+      });
+  </script>
+</body>
+</html>
